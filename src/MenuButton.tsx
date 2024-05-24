@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import './Button.css'
+import './Button.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
@@ -10,71 +10,67 @@ interface Props {
 
 const MenuButton: React.FC<Props> = ({ title, submenu }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const submenuFirstItemRef = useRef<HTMLButtonElement>(null);
     const hasSubmenu = submenu && submenu.length > 0;
     const [submenuOpen, setSubmenuOpen] = useState(false);
+    const [stayOpen, setStayOpen] = useState(false);
 
-    const toggleSubmenu = (event: React.MouseEvent | React.KeyboardEvent) => {
-        event.stopPropagation();
-        setSubmenuOpen(!submenuOpen);
+    const toggleSubmenu = () => {
+        const newStayOpen = !stayOpen;
+        setStayOpen(newStayOpen);
+        if (newStayOpen && submenuFirstItemRef.current) {
+            submenuFirstItemRef.current.focus();  // Focus the first submenu item when opened via keyboard
+        }
     };
 
     useEffect(() => {
-        if (submenuOpen && containerRef.current) {
-            const firstSubmenuItem = containerRef.current.querySelector('.submenu-item') as HTMLElement;
-            firstSubmenuItem?.focus();
+        const handleMouseEnter = () => {
+            if (hasSubmenu && !stayOpen && window.innerWidth > 767) {
+                setSubmenuOpen(true);
+            }
+        };
+
+        const handleMouseLeave = () => {
+            if (hasSubmenu && !stayOpen && window.innerWidth > 767) {
+                setSubmenuOpen(false);
+            }
+        };
+
+        const menuButton = containerRef.current;
+        if (menuButton) {
+            menuButton.addEventListener('mouseenter', handleMouseEnter);
+            menuButton.addEventListener('mouseleave', handleMouseLeave);
         }
-    }, [submenuOpen]);
+
+        return () => {
+            if (menuButton) {
+                menuButton.removeEventListener('mouseenter', handleMouseEnter);
+                menuButton.removeEventListener('mouseleave', handleMouseLeave);
+            }
+        };
+    }, [hasSubmenu, stayOpen]);
 
     const handleKeyDown = (event: React.KeyboardEvent) => {
-        if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
-            toggleSubmenu(event);
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggleSubmenu();
         }
     };
 
     return (
-        <div
-            ref={containerRef}
-            className="menu-button"
-            style={{ position: 'relative', margin: "0 10px" }}
-            onMouseLeave={() => !submenuOpen && setSubmenuOpen(false)}
-            role="menu"
-        >
-            <button
-                className="bubble-button"
-                onClick={toggleSubmenu}
-                onKeyDown={handleKeyDown}
-                aria-haspopup="true"
-                aria-expanded={submenuOpen}
-            >
+        <div ref={containerRef} className="menu-button" style={{ position: 'relative', margin: "0 10px" }}>
+            <button className="bubble-button" onClick={toggleSubmenu} onKeyDown={handleKeyDown}
+                aria-haspopup="true" aria-expanded={submenuOpen}>
                 <span>{title}</span>
                 {hasSubmenu && (
-                    <FontAwesomeIcon
-                        icon={submenuOpen ? faChevronUp : faChevronDown}
-                        className="chevron"
-                        style={{ marginLeft: 'auto' }}
-                    />
+                    <FontAwesomeIcon icon={(stayOpen || submenuOpen) ? faChevronUp : faChevronDown} className={`chevron ${stayOpen ? 'stay-open' : ''}`} />
                 )}
             </button>
             {hasSubmenu && (
-                <menu
-                    className={`submenu ${submenuOpen ? "submenu-visible" : ""}`}
-                    role="menu"
-                >
+                <menu className={`submenu ${stayOpen || submenuOpen ? "submenu-visible" : ""}`}>
                     {submenu.map((item, idx) => (
-                        <button
-                            key={idx}
-                            className="submenu-item"
-                            role="menuitem"
-                            tabIndex={submenuOpen ? 0 : -1}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Escape') {
-                                    setSubmenuOpen(false);
-                                    (containerRef.current?.querySelector('.bubble-button') as HTMLElement)?.focus();
-                                }
-                            }}
-                        >
-                            {item}
-                        </button>
+                        <button key={idx} ref={idx === 0 ? submenuFirstItemRef : undefined}
+                            className="submenu-item">{item}</button>
                     ))}
                 </menu>
             )}

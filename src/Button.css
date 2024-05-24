@@ -91,18 +91,9 @@ button::before {
     transform: scale(1) translate(-10px, -70px);
 }
 
-.menu-button:hover .submenu {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
-}
 
 .bubble-button .chevron {
     transition: transform 0.1s ease;
-}
-
-.menu-button:hover .chevron {
-    transform: rotate(180deg);
 }
 
 .submenu {
@@ -115,7 +106,7 @@ button::before {
     border-radius: 4px;
     z-index: 10;
     margin: 2px 0;
-    min-width: 100%;
+    min-width: 200px;
     box-sizing: border-box;
     border: 2px solid #1b1b20;
     white-space: nowrap;
@@ -127,7 +118,6 @@ button::before {
     transition: opacity 0.5s ease, visibility 0s, transform 0.5s ease;
 }
 
-.menu-button:hover .submenu,
 .submenu-visible {
     visibility: visible;
     opacity: 1;
