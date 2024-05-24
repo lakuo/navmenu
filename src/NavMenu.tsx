@@ -16,7 +16,7 @@ const menuItems: MenuItem[] = [
 
 const NavMenu: React.FC = () => {
     return (
-        <div className="menu-container">
+        <div className="menu-container" aria-label="Main navigation">
             {menuItems.map((menuItem) => (
                 <MenuButton title={menuItem.name} submenu={menuItem.submenu || undefined} />
             ))}

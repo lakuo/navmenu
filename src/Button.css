@@ -6,13 +6,10 @@
     box-sizing: border-box;
 }
 
-/* Body */
-
 body {
     background-color: white;
 }
 
-/* Buttons */
 
 button {
     font-family: "Montserrat", sans-serif;
@@ -39,8 +36,6 @@ button::after,
 button::before {
     border-radius: 3px;
 }
-
-/* Bubble Button */
 
 .bubble-button {
     background-color: transparent;
@@ -96,7 +91,20 @@ button::before {
     transform: scale(1) translate(-10px, -70px);
 }
 
-/* Submenu */
+.menu-button:hover .submenu {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.bubble-button .chevron {
+    transition: transform 0.1s ease;
+}
+
+.menu-button:hover .chevron {
+    transform: rotate(180deg);
+}
+
 .submenu {
     position: absolute;
     top: 100%;
@@ -116,9 +124,10 @@ button::before {
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s ease-out;
+    transition: opacity 0.5s ease, visibility 0s, transform 0.5s ease;
 }
 
+.menu-button:hover .submenu,
 .submenu-visible {
     visibility: visible;
     opacity: 1;
@@ -128,12 +137,14 @@ button::before {
 .submenu-item {
     position: relative;
     display: block;
-    padding: 10px 10px;
+    padding: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
     color: #333;
     background: white;
     border-bottom: 1px solid #ccc;
     transition: background-color 0.2s;
-    width: calc(100% - 20px);
+    width: 100%;
     padding-left: 0;
     box-sizing: border-box;
     text-align: left;
@@ -141,8 +152,4 @@ button::before {
 
 .submenu-item:hover {
     background-color: #f7f7f7;
-}
-
-.submenu-item:last-child {
-    border-bottom: none;
 }
